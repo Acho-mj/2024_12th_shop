@@ -1,13 +1,16 @@
 package likelion12th.shop.entity;
-
 import jakarta.persistence.*;
-import likelion12th.SwuniForest.constant.ItemSellStatus;
+import likelion12th.shop.constant.ItemSellStatus;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @Table(name="item")
 @Getter
+@Setter
+@ToString
 public class Item extends Base {
     @Id
     @Column(name = "item_id")
@@ -22,7 +25,6 @@ public class Item extends Base {
     private Integer stock;
     @NotNull
     private String itemDetail;
-
     @Enumerated(EnumType.STRING)
     private ItemSellStatus itemSellStatus;
 }
