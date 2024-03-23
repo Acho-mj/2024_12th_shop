@@ -1,8 +1,10 @@
 package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
-import likelion12th.SwuniForest.constant.OrderStatus;
+
+import likelion12th.shop.constant.OrderStatus;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name="orders") // mysql 예약어 order
-@Getter
+@Getter @Setter
 public class Order extends Base {
     @Id
     @Column(name = "order_id")

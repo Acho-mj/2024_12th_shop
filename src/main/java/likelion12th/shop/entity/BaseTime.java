@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 // 공통으로 가지고 있는 엔티티가 아닌 클래스를 상속받을 때 사용
 @MappedSuperclass
 @EntityListeners(value={AuditingEntityListener.class})
-@Getter
+@Getter @Setter
 public abstract class BaseTime {
 
     // 등록 시간
