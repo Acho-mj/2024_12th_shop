@@ -15,7 +15,6 @@ public class Member extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private String name;
 
     @Column(unique = true)
