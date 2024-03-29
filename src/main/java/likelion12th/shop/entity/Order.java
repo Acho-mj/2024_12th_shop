@@ -1,7 +1,7 @@
 package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
-import likelion12th.SwuniForest.constant.OrderStatus;
+import likelion12th.shop.constant.OrderStatus;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

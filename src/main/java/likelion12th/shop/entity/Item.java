@@ -1,7 +1,7 @@
 package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
-import likelion12th.SwuniForest.constant.ItemSellStatus;
+import likelion12th.shop.constant.ItemSellStatus;
 import lombok.Getter;
 import org.antlr.v4.runtime.misc.NotNull;
 
@@ -14,13 +14,9 @@ public class Item extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private String itemName;
-    @NotNull
     private Integer price;
-    @NotNull
     private Integer stock;
-    @NotNull
     private String itemDetail;
 
     @Enumerated(EnumType.STRING)

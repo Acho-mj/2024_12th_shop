@@ -1,8 +1,9 @@
 package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
-import likelion12th.SwuniForest.constant.Role;
+import likelion12th.shop.constant.Role;
 import lombok.Getter;
+import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @Table(name="member")
@@ -14,6 +15,7 @@ public class Member extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
 
     @Column(unique = true)

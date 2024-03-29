@@ -22,6 +22,5 @@ public class CartItem extends Base {
     @JoinColumn(name = "item_id")
     private Item item;
 
-    @NotNull
     private Integer count;
 }
