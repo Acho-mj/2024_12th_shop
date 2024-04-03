@@ -20,11 +20,13 @@ public class Item extends Base {
     private Long id;
 
 
+
     private String itemName;
 
     private Integer price;
 
     private Integer stock;
+
 
     private String itemDetail;
 
