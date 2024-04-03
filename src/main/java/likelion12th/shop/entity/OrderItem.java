@@ -2,10 +2,11 @@ package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name="order_item")
-@Getter
+@Getter @Setter
 public class OrderItem extends Base {
     @Id
     @Column(name = "order_item_id")
