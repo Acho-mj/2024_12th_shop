@@ -2,11 +2,15 @@ package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
 
-import likelion12th.shop.constant.Role;
 import likelion12th.shop.dto.MemberFormDto;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+
+import likelion12th.shop.constant.Role;
+
+import org.antlr.v4.runtime.misc.NotNull;
+
 
 @Entity
 @Table(name="member")
