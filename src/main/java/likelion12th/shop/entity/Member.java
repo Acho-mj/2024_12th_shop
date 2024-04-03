@@ -6,7 +6,7 @@ import likelion12th.shop.constant.Role;
 import likelion12th.shop.dto.MemberFormDto;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 @Entity
 @Table(name="member")

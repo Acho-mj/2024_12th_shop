@@ -1,10 +1,12 @@
 package likelion12th.shop.entity;
 import jakarta.persistence.*;
 import likelion12th.shop.constant.ItemSellStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name="item")
@@ -17,14 +19,20 @@ public class Item extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+
     private String itemName;
-    @NotNull
+
     private Integer price;
-    @NotNull
+
     private Integer stock;
-    @NotNull
+
     private String itemDetail;
+
     @Enumerated(EnumType.STRING)
     private ItemSellStatus itemSellStatus;
+
+    private String itemImg;
+    private String itemImgPath;
+
+
 }
