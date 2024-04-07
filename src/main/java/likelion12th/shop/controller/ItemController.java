@@ -1,13 +1,11 @@
 package likelion12th.shop.controller;
 
 import likelion12th.shop.dto.ItemFormDto;
-import likelion12th.shop.entity.Item;
 import likelion12th.shop.service.ItemService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
