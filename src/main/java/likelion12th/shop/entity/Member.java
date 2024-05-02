@@ -33,8 +33,12 @@ public class Member extends Base {
         Member member = new Member();
         member.setName(memberFormDto.getName());
         member.setEmail(memberFormDto.getEmail());
-        member.setPassword(memberFormDto.getPassword());
+
         member.setAddress(memberFormDto.getAddress());
+        // 스프링 시큐리티 전이므로 주석 처리 하겠음
+        // String password = passwordEncoder.encode(memberFormDto.getPassword());
+        member.setPassword(memberFormDto.getPassword());
+        member.setRole(Role.USER);
 
         return member;
     }
