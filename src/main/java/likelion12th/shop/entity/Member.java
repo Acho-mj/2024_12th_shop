@@ -35,11 +35,11 @@ public class Member extends Base {
     public static Member createMember(MemberFormDto memberFormDto /*, PasswordEncoder passwordEncoder*/ ){
         Member member = new Member();
         member.setName(memberFormDto.getName());
-        member.setEmail(member.getEmail());
-        member.setAddress(member.getAddress());
+        member.setEmail(memberFormDto.getEmail());
+        member.setAddress(memberFormDto.getAddress());
         // 스프링 시큐리티 전이므로 주석 처리 하겠음
         // String password = passwordEncoder.encode(memberFormDto.getPassword());
-        member.setPassword(member.getPassword());
+        member.setPassword(memberFormDto.getPassword());
         member.setRole(Role.USER);
         return member;
     }

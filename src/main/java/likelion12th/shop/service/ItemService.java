@@ -5,12 +5,15 @@ import likelion12th.shop.entity.Item;
 import likelion12th.shop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.ArrayList;
 @Service
@@ -50,5 +53,75 @@ public class ItemService {
         List<ItemFormDto> itemFormDtos = new ArrayList<>();
         items.forEach(s -> itemFormDtos.add(ItemFormDto.of(s)));  // 각 상품 정보를 ItemFormDto로 변환하여 리스트에 추가
         return itemFormDtos;
+    }
+
+
+    // 특정 상품 조회
+    public ItemFormDto getItemById(Long itemId) {
+        // 아이템 ID로 아이템을 조회
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+
+        if (optionalItem.isPresent()) {
+            // 아이템을 찾았을 경우 ItemFormDto로 변환하여 반환
+            return ItemFormDto.of(optionalItem.get());
+        } else {
+            // 아이템을 찾지 못했을 경우 예외 처리
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "ID에 해당하는 상품을 찾을 수 없습니다: " + itemId);
+        }
+    }
+
+    // 상품 수정
+    public void updateItem(Long itemId, ItemFormDto itemFormDto, MultipartFile itemImg) throws Exception {
+        // 아이템 ID로 아이템을 조회
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+
+        if (optionalItem.isPresent()) {
+            Item item = optionalItem.get();
+
+            // 업데이트할 필드만 업데이트
+            if (itemFormDto.getItemName() != null) {
+                item.setItemName(itemFormDto.getItemName());
+            }
+            if (itemFormDto.getPrice() != null) {
+                item.setPrice(itemFormDto.getPrice());
+            }
+            if (itemFormDto.getItemDetail() != null) {
+                item.setItemDetail(itemFormDto.getItemDetail());
+            }
+            if (itemFormDto.getItemSellStatus() != null) {
+                item.setItemSellStatus(itemFormDto.getItemSellStatus());
+            }
+            if (itemFormDto.getStock() != null) {
+                item.setStock(itemFormDto.getStock());
+            }
+
+            // 이미지 업데이트
+            if (itemImg != null) {
+                UUID uuid = UUID.randomUUID();
+                String fileName = uuid.toString() + "_" + itemImg.getOriginalFilename();
+                File itemImgFile = new File(uploadPath, fileName);
+                itemImg.transferTo(itemImgFile);
+                item.setItemImg(fileName);
+                item.setItemImgPath(uploadPath + "/" + fileName);
+            }
+
+            // 수정된 상품 저장
+            itemRepository.save(item);
+        } else {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "ID에 해당하는 상품을 찾을 수 없습니다: " + itemId);
+        }
+    }
+
+    // 상품 삭제
+    public void deleteItem(Long itemId) {
+        // 삭제할 상품을 아이디로 조회
+        Optional<Item> optionalItem = itemRepository.findById(itemId);
+
+        if (optionalItem.isPresent()) {
+            // 상품이 존재하면 삭제
+            itemRepository.delete(optionalItem.get());
+        } else {
+            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "ID에 해당하는 상품을 찾을 수 없습니다: " + itemId);
+        }
     }
 }
