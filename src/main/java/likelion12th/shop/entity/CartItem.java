@@ -2,7 +2,8 @@ package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import org.antlr.v4.runtime.misc.NotNull;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="cart_item")
@@ -22,6 +23,7 @@ public class CartItem extends Base {
     @JoinColumn(name = "item_id")
     private Item item;
 
-
     private Integer count;
+
+
 }

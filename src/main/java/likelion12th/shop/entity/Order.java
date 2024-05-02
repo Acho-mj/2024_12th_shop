@@ -1,7 +1,6 @@
 package likelion12th.shop.entity;
 
 import jakarta.persistence.*;
-
 import likelion12th.shop.constant.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,20 +18,18 @@ public class Order extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 주문 상태
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    // 주문한 멤버
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    // 양방향 매핑
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<OrderItem> orderItemList = new ArrayList<>();
+
     // 주문 시간
     private LocalDateTime orderDate;
-
-    // 주문한 상품 리스트
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems = new ArrayList<>();
 
 }
