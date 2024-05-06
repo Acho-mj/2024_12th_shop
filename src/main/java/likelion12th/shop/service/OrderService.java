@@ -2,6 +2,7 @@ package likelion12th.shop.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import likelion12th.shop.dto.OrderDto;
+import likelion12th.shop.dto.OrderHisDto;
 import likelion12th.shop.dto.OrderItemDto;
 import likelion12th.shop.entity.Item;
 import likelion12th.shop.entity.Member;
@@ -11,11 +12,13 @@ import likelion12th.shop.repository.ItemRepository;
 import likelion12th.shop.repository.MemberRepository;
 import likelion12th.shop.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +58,13 @@ public class OrderService {
         orderRepository.save(order);
 
         return order.getId();
+    }
+
+    // 모든 주문 내역 조회
+    public List<OrderHisDto> getOrders() {
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(OrderHisDto::of)
+                .collect(Collectors.toList());
     }
 }
