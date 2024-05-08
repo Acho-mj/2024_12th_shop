@@ -1,19 +1,24 @@
 package likelion12th.shop.dto;
 
+import likelion12th.shop.entity.Item;
+import likelion12th.shop.entity.OrderItem;
 import lombok.Getter;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 
 @Getter
 @Setter
-// 주문 상품 정보를 담음
 public class OrderItemDto {
     private Long itemId;
-    private String itemNm; // 상품명
-    private int count; // 주문 수량
-    private int orderPrice;
-    private String itemImgPath;
+    private String itemName;
+    private Integer itemPrice;
+    private Integer count;
+    private int totalPrice;
 
-    public Long getItemId() {
-        return itemId;
+    private static ModelMapper modelMapper = new ModelMapper();
+
+    public static OrderItemDto of(OrderItem orderItem){
+        return modelMapper.map(orderItem,OrderItemDto.class);
     }
+
 }

@@ -1,14 +1,31 @@
 package likelion12th.shop.dto;
 
+import likelion12th.shop.constant.OrderStatus;
+import likelion12th.shop.entity.Order;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
 @Getter
 @Setter
-// 주문을 생성할 때 필요한 정보를 담음
+@NoArgsConstructor
 public class OrderDto {
-    private List<OrderItemDto> orderItems;
+    private Long orderId; //주문아이디
+    private String orderDate; //주문날짜
+    private OrderStatus orderStatus; //주문 상태
+    private Long itemId;
+    private int totalPrice;
+
+    private static ModelMapper modelMapper = new ModelMapper();
+    public static OrderDto of(Order order){
+        OrderDto orderDto = modelMapper.map(order, OrderDto.class);
+        if (!order.getOrderItemList().isEmpty()) {
+            orderDto.setItemId(order.getOrderItemList().get(0).getItem().getId());
+        }
+        return orderDto;
+    }
+
 }

@@ -1,9 +1,10 @@
 package likelion12th.shop.service;
 
-import jakarta.persistence.EntityNotFoundException;
-import likelion12th.shop.dto.OrderDto;
-import likelion12th.shop.dto.OrderHisDto;
+import likelion12th.shop.constant.OrderStatus;
+import likelion12th.shop.dto.ItemFormDto;
 import likelion12th.shop.dto.OrderItemDto;
+import likelion12th.shop.dto.OrderReqDto;
+import likelion12th.shop.dto.OrderDto;
 import likelion12th.shop.entity.Item;
 import likelion12th.shop.entity.Member;
 import likelion12th.shop.entity.Order;
@@ -12,10 +13,10 @@ import likelion12th.shop.repository.ItemRepository;
 import likelion12th.shop.repository.MemberRepository;
 import likelion12th.shop.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,41 +31,67 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
     // 주문하기
-    public Long order(OrderDto orderDto, String email){
-
-        // 현재 로그인한 회원의 이메일 정보를 이용해서 회원 정보를 조회한다.
+    @Transactional
+    public Long createNewOrder(OrderReqDto orderReqDto, String email) {
+        // 이메일로 회원 생성
         Member member = memberRepository.findByEmail(email);
-
-        // 주문할 상품 리스트를 담을 ArrayList 생성
-        List<OrderItem> orderItemList = new ArrayList<>();
-
-        // 주문할 상품 엔티티와 주문 수량을 이용하여 주문 상품 엔티티를 생성한다.
-        // orderItems는 주문할 상품들을 담고 있는 리스트
-        for (OrderItemDto orderItemDto : orderDto.getOrderItems()) {
-            // 주문할 상품을 조회하기 위해 주어진 orderItemDto의 itemId를 사용
-            // itemRepository에서 해당 상품을 찾는다.
-            Item item = itemRepository.findById(orderItemDto.getItemId())
-                    .orElseThrow(EntityNotFoundException::new);
-
-            // 조회한 상품 정보와 주문 수량을 사용하여 주문 상품 엔티티를 생성
-            OrderItem orderItem = OrderItem.createOrderItem(item, orderItemDto.getCount());
-            orderItemList.add(orderItem);
+        if (member == null) {
+            Member newMember = new Member();
+            newMember.setEmail(email);
+            member = memberRepository.save(newMember);
         }
 
-        // 회원 정보와 주문할 상품 리스트 정보를 이용하여 주문 엔티티를 생성한다.
-        Order order = Order.createOrder(member, orderItemList);
+        // 주문할 상품 정보 조회
+        Long itemId = orderReqDto.getItemId();
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID를 가진 상품을 찾을 수 없습니다: " + itemId));
 
-        // 생성한 주문 엔티티를 저장한다.
+        // 주문 상품 생성
+        OrderItem orderItem = OrderItem.createOrderItem(item, orderReqDto.getCount());
+
+
+        // 주문 생성
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+        Order order = Order.createOrder(member, orderItems);
+
+        // 생성된 주문을 저장
         orderRepository.save(order);
 
+        // 생성된 주문의 ID 반환
         return order.getId();
     }
 
     // 모든 주문 내역 조회
-    public List<OrderHisDto> getOrders() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .map(OrderHisDto::of)
-                .collect(Collectors.toList());
+    public List<OrderDto> getAllOrdersByUserEmail(String email) {
+        List<Order> orders = orderRepository.findByMemberEmail(email);
+        List<OrderDto> OrderDtos = new ArrayList<>();
+        orders.forEach(s -> OrderDtos.add(OrderDto.of(s)));
+        return OrderDtos;
     }
+
+    
+    // 주문 상세 조회
+    public OrderItemDto getOrderDetails(Long orderId, String email) {
+        // 주문을 orderId로 조회
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
+
+        // 주문을 생성한 사용자인지 확인
+        if (!order.getMember().getEmail().equals(email)) {
+            throw new IllegalArgumentException("Only the owner of the order can view its details.");
+        }
+
+        List<OrderItem> orderItems = order.getOrderItemList();
+        if (!orderItems.isEmpty()) {
+            OrderItem orderItem = orderItems.get(0);
+            Item item = orderItem.getItem();
+
+            // OrderItemDto 객체로 변환하여 반환
+            return OrderItemDto.of(orderItem);
+        } else {
+            throw new IllegalArgumentException("Order does not contain any items.");
+        }
+    }
+
 }

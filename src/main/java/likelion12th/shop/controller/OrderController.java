@@ -1,8 +1,10 @@
 package likelion12th.shop.controller;
 
 import likelion12th.shop.dto.OrderDto;
-import likelion12th.shop.dto.OrderHisDto;
+import likelion12th.shop.dto.OrderItemDto;
+import likelion12th.shop.dto.OrderReqDto;
 import likelion12th.shop.entity.Order;
+import likelion12th.shop.entity.OrderItem;
 import likelion12th.shop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,27 +20,32 @@ public class OrderController {
     private final OrderService orderService;
 
     // 주문하기
-    @PostMapping(value = "/new")
-    public @ResponseBody ResponseEntity order(@RequestBody OrderDto orderDto){
-
-        String email = "a@naver.com";
-        Long orderId;
-
+    @PostMapping("/new")
+    public ResponseEntity<String> createNewOrder(@RequestBody OrderReqDto orderReqDto, @RequestParam String email) {
         try {
-            // 주문 정보와 회원의 이메일 정보를 이용하여 주문 로직을 호출한다.
-            orderId = orderService.order(orderDto, email);
-        } catch(Exception e){
-            return ResponseEntity.ok().body(e.getMessage());
-        }
+            // email로 받아온 사용자 이름으로 주문을 생성
+            Long orderId = orderService.createNewOrder(orderReqDto, email);
 
-        // 생성된 주문 번호 반환
-        return ResponseEntity.ok().body(orderId);
+            return ResponseEntity.ok("사용자: " + email + ", 주문 ID: " + orderId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("주문 실패 : " + e.getMessage());
+        }
     }
 
     // 주문 내역 전체 조회
-    @GetMapping("/his/all")
-    public ResponseEntity<List<OrderHisDto>> getOrders() {
-        List<OrderHisDto> orderHistory = orderService.getOrders();
-        return ResponseEntity.ok().body(orderHistory);
+    @GetMapping("/all")
+    public ResponseEntity<List<OrderDto>> getAllOrdersByUserEmail(@RequestParam String email) {
+        List<OrderDto> orders = orderService.getAllOrdersByUserEmail(email);
+        return ResponseEntity.ok(orders);
     }
+
+    
+    // 주문 상세 조회
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderItemDto> getOrderDetails(@PathVariable Long orderId, @RequestParam String email) {
+        OrderItemDto orderItemDto = orderService.getOrderDetails(orderId, email);
+        return ResponseEntity.ok(orderItemDto);
+    }
+
+
 }
