@@ -37,4 +37,9 @@ public class Item extends Base {
         }
         this.stock = restStock;
     }
+
+    // 주문 취소 시 상품의 재고를 증가시키는 로직
+    public void addStock(int stock){
+        this.stock += stock;
+    }
 }

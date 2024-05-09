@@ -41,14 +41,14 @@ public class Order extends Base {
         orderItem.setOrder(this);
     }
 
-    // 주문 생성하기
+    // 회원과 아이템 아이템 리스트로 주문 생성하기
     public static Order createOrder(Member member, List<OrderItem> orderItemList) {
         Order order = new Order();
         // 상품을 주문한 회원의 정보를 세팅한다.
         order.setMember(member);
 
         // 장바구니 페이지에서는 한 번에 여러 개의 상품을 주문할 수 있으므로
-        // 여러 개의 주문 상품을 담을 수 있도록 리스트 형태로 주문 객체에 orderItem 객체를 추가한다.
+        // 여러 개의 주문 상품을 담을 수 있도록 orderItem 객체를 추가한다.
         for(OrderItem orderItem : orderItemList) {
             order.addOrderItem(orderItem);
         }
@@ -64,9 +64,20 @@ public class Order extends Base {
     public int getTotalPrice() {
         int totalPrice = 0;
         for(OrderItem orderItem : orderItemList){
+            // orderItem에서 메소드 호출
             totalPrice += orderItem.getTotalPrice();
         }
         return totalPrice;
+    }
+
+    // 주문 상태를 "CANCEL" 상태로 바꿔주고
+    // 주문 취소 시 주문 수향을 상품의 재고에 더해주는 로직
+    public void cancelOrder() {
+        this.orderStatus = OrderStatus.CANCEL;
+        for (OrderItem orderItem : orderItemList) {
+            // orderItem에서 메소드 호출
+            orderItem.cancel();
+        }
     }
 
 
