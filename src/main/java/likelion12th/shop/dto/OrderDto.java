@@ -20,6 +20,8 @@ public class OrderDto {
     private int totalPrice;
 
     private static ModelMapper modelMapper = new ModelMapper();
+    
+    // Order 객체를 OrderDto로 변환
     public static OrderDto of(Order order){
         OrderDto orderDto = modelMapper.map(order, OrderDto.class);
         if (!order.getOrderItemList().isEmpty()) {

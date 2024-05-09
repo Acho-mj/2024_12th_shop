@@ -1,5 +1,6 @@
 package likelion12th.shop.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import likelion12th.shop.constant.OrderStatus;
 import likelion12th.shop.dto.ItemFormDto;
 import likelion12th.shop.dto.OrderItemDto;
@@ -47,15 +48,18 @@ public class OrderService {
 
         // 상품 ID로 상품 정보를 데이터베이스에서 조회
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID를 가진 상품을 찾을 수 없습니다: " + itemId));
+                .orElseThrow(() -> new IllegalArgumentException("상품 ID 없음 : " + itemId));
 
 
         // 주문 상품 생성(상품과 주문 개수)
+        // hint! 주문할 상품과 수량으로 OrderItem 객체를 만드는 메소드를 호출
         OrderItem orderItem = OrderItem.createOrderItem(item, orderReqDto.getCount());
+
 
         // 주문 상품 목록과 회원 정보로 주문을 생성한다.
         List<OrderItem> orderItems = new ArrayList<>();
         orderItems.add(orderItem);
+        // hint! 회원과 아이템 리스트로 주문 생성하는 메소드를 호출
         Order order = Order.createOrder(member, orderItems);
 
         // 생성된 주문을 저장
@@ -83,7 +87,7 @@ public class OrderService {
     public OrderItemDto getOrderDetails(Long orderId, String email) {
         // orderId로 주문 조회
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + orderId));
+                .orElseThrow(() -> new IllegalArgumentException("주문 ID 없음 : " + orderId));
 
         // 주문을 생성한 사용자인지 확인
         if (!order.getMember().getEmail().equals(email)) {
@@ -103,19 +107,21 @@ public class OrderService {
         }
     }
 
+
     // 주문 취소
     public void cancelOrder(Long orderId, String email) {
         // 주문을 orderId로 조회
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID를 가진 주문을 찾을 수 없습니다: " + orderId));
+                .orElseThrow(() -> new IllegalArgumentException("주문 ID 없음 : " + orderId));
 
         // 주문을 생성한 사용자인지 확인
         if (!order.getMember().getEmail().equals(email)) {
-            throw new IllegalArgumentException("해당 주문을 취소할 수 있는 권한이 없습니다.");
+            throw new IllegalArgumentException("취소 권한이 없음");
         }
 
         // 주문 상태를 "CANCEL"로 변경
-        order.setOrderStatus(OrderStatus.CANCEL);
+        // 주문 취소한 수량만큼 상품의 재고를 증가
+        order.cancelOrder();
 
         // 주문 정보 업데이트
         orderRepository.save(order);
