@@ -72,7 +72,7 @@ public class ItemService {
 
     // 상품 수정
     public void updateItem(Long itemId, ItemFormDto itemFormDto, MultipartFile itemImg) throws Exception {
-        // 아이템 ID로 아이템을 조회
+        // 아이템 ID로 아이템을 조회 - NPE 방지를 위한 객체 포장
         Optional<Item> optionalItem = itemRepository.findById(itemId);
 
         if (optionalItem.isPresent()) {
@@ -123,5 +123,17 @@ public class ItemService {
         } else {
             throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "ID에 해당하는 상품을 찾을 수 없습니다: " + itemId);
         }
+    }
+
+    // 상품명으로 상품 조회
+    public List<ItemFormDto> getItemsByName(String itemName) {
+        // 쿼리메소드 호출하여 해당하는 아이템 리스트 반환하여 저장
+        List<Item> items = itemRepository.findByItemNameContainingIgnoreCase(itemName);
+        // 엔티티 리스트 -> 디티오 리스트로 변경 시 담을 디티오 리스트 선언
+        List<ItemFormDto> itemFormDtos = new ArrayList<>();
+        // 아이템 리스트를 순회하며 디티오로 변환하여 선언된 리스트에 담음
+        items.forEach(s -> itemFormDtos.add(ItemFormDto.of(s)));  // 각 상품 정보를 ItemFormDto로 변환하여 리스트에 추가
+        // 디티오 리스트 반환
+        return itemFormDtos;
     }
 }

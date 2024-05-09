@@ -106,4 +106,19 @@ public class ItemController {
         }
     }
 
+    // 상품명으로 상품 조회
+    @GetMapping("/search")
+    public ResponseEntity<List<ItemFormDto>> searchItemsByName(@RequestParam("itemName") String itemName) {
+        try {
+            // 상품명으로 상품 조회
+            List<ItemFormDto> itemFormDtos = itemService.getItemsByName(itemName);
+            // 조회된 상품 정보 반환
+            return ResponseEntity.ok().body(itemFormDtos);
+        } catch (Exception e) {
+            // 예외 발생 시 500 에러 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
 }
