@@ -4,6 +4,7 @@ import likelion12th.shop.dto.ItemFormDto;
 import likelion12th.shop.entity.Item;
 import likelion12th.shop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,9 +21,10 @@ import java.util.ArrayList;
 @Transactional
 @RequiredArgsConstructor
 public class ItemService {
+
     private final ItemRepository itemRepository;
 
-    public Long saveItem(ItemFormDto itemFormDto) throws Exception{
+    public Long saveItem(ItemFormDto itemFormDto) throws Exception {
         // 상품 등록
         Item item = itemFormDto.createItem();
 

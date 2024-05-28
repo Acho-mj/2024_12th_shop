@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,9 @@ public class CartTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
     // 영속성 컨텍스트를 제어하는 인터페이스 EntityManager
     @PersistenceContext
     EntityManager em;
@@ -34,7 +38,7 @@ public class CartTest {
         memberFormDto.setName("김멋사");
         memberFormDto.setAddress("수원시 장안구 정자3동");
         memberFormDto.setPassword("1234");
-        return Member.createMember(memberFormDto);
+        return Member.createMember(memberFormDto, passwordEncoder);
     }
 
     @Test
