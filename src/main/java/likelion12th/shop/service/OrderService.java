@@ -82,7 +82,7 @@ public class OrderService {
         return OrderDtos;
     }
 
-    
+
     // 주문 상세 조회
     public OrderItemDto getOrderDetails(Long orderId, String email) {
         // orderId로 주문 조회
