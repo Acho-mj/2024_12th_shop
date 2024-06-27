@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class OrderDto {
     private Long orderId; //주문아이디
     private String orderDate; //주문날짜
     private OrderStatus orderStatus; //주문 상태
-    private Long itemId;
+    private List<Long> itemIds; // 여러 아이템 ID
     private int totalPrice;
 
     private static ModelMapper modelMapper = new ModelMapper();
@@ -24,9 +25,9 @@ public class OrderDto {
     // Order 객체를 OrderDto로 변환
     public static OrderDto of(Order order){
         OrderDto orderDto = modelMapper.map(order, OrderDto.class);
-        if (!order.getOrderItemList().isEmpty()) {
-            orderDto.setItemId(order.getOrderItemList().get(0).getItem().getId());
-        }
+        orderDto.setItemIds(order.getOrderItemList().stream()
+                .map(orderItem -> orderItem.getItem().getId())
+                .collect(Collectors.toList()));
         return orderDto;
     }
 
